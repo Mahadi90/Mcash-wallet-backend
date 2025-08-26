@@ -22,7 +22,26 @@ const createUser = async(req : Request, res : Response, next : NextFunction) => 
         })
     }
 }
+const getAllUser = async(req : Request, res : Response, next : NextFunction) => {
+    try {
+        const users = await userService.getAllUser()
+        console.log(users);
+
+        res.status(httpStatusCose.OK).json({
+            success : true,
+            message : 'User retrive successfully',
+            data : users
+        })
+    } catch (error : any) {
+          res.status(httpStatusCose.BAD_REQUEST).json({
+            success : false,
+            message : error.message,
+            error
+        })
+    }
+}
 
 export const userController = {
-    createUser
+    createUser,
+    getAllUser
 }
