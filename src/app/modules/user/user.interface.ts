@@ -4,6 +4,7 @@ export enum Role {
     USER = 'USER',
     ADMIN = 'ADMIN',
     AGENT = 'AGENT',
+    SUPER_ADMIN = 'SUPER_ADMIN'
 }
 
 export interface IAUTH {

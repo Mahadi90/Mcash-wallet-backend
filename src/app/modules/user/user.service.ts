@@ -1,3 +1,4 @@
+import { envConfig } from "../../config/env";
 import { IAUTH, IUser } from "./user.interface";
 import { User } from "./user.model";
 import bcrypt from 'bcrypt'
@@ -10,7 +11,7 @@ const craeteUser = async (payload: Partial<IUser>) => {
         throw new Error('User already exist')
     }
 
-    const hashedPass =await bcrypt.hash(password as string, 10)
+    const hashedPass =await bcrypt.hash(password as string, parseInt(envConfig.bcryptSalt))
 
     const authProvider: IAUTH = {provider : 'credentials', providerId : phone as string}
 

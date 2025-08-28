@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 import app from './app';
 import { envConfig } from './app/config/env';
+import { seedSuperAdmin } from './app/utils/seedSuperAdmin';
 
-async function main() {
+async function server() {
   try {
     await mongoose.connect(envConfig.dbUrl);
     console.log('Connect to DB');
@@ -15,4 +16,8 @@ async function main() {
   }
 }
 
-main();
+(async() => {
+  await server();
+  await seedSuperAdmin()
+})()
+
