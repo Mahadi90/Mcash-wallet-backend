@@ -5,8 +5,9 @@ import { Role } from "./user.interface";
 
 const router = Router()
 
-router.post('/register' ,userController.createUser)
-
 router.get('/all-user', checkAuth(Role.ADMIN, Role.SUPER_ADMIN) ,userController.getAllUser)
+router.post('/register' ,userController.createUser)
+router.patch('/:id', checkAuth(...Object.values(Role)), userController.updateUser)
+
 
 export const UserRoute = router  
