@@ -10,4 +10,6 @@ export const envConfig = {
   bcryptSalt : process.env.BCRYPT_SALT_ROUND || '',
   superAdminPhone : process.env.SUPER_ADMIN_PHONE || '',
   superAdminPassword : process.env.SUPER_ADMIN_PASSWORD || '',
+  JWT_REFRESH_SECRET : process.env.JWT_REFRESH_SECRET || '',
+  JWT_REFRESH_EXPIRES : process.env.JWT_REFRESH_EXPIRES || '',
 };

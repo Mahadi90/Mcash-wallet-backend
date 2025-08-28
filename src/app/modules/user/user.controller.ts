@@ -9,7 +9,7 @@ import { JwtPayload } from "jsonwebtoken";
 
 const createUser = async(req : Request, res : Response, next : NextFunction) => {
     try {
-        console.log(req.body);
+        
         const data = await userService.craeteUser(req.body)
 
         res.status(httpStatusCode.CREATED).json({
@@ -53,7 +53,6 @@ const updateUser = async(req : Request, res : Response, next : NextFunction)=> {
 const getAllUser = async(req : Request, res : Response, next : NextFunction) => {
     try {
         const users = await userService.getAllUser()
-        console.log(users);
 
         res.status(httpStatusCode.OK).json({
             success : true,
