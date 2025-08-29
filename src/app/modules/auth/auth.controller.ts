@@ -3,7 +3,7 @@
 import { NextFunction, Request, Response } from "express";
 import { authService } from "./auth.service";
 import httpStatusCose from 'http-status-codes'
-import { ITokens, setAuthCookies } from "../../utils/setCookie";
+import {  setAuthCookies } from "../../utils/setCookie";
 
 
 

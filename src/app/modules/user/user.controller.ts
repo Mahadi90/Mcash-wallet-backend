@@ -6,63 +6,71 @@ import httpStatusCode from 'http-status-codes'
 import { verifyToken } from "../../utils/jwt";
 import { envConfig } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import { Wallet } from "../wallet/wallet.model";
 
-const createUser = async(req : Request, res : Response, next : NextFunction) => {
+const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        
-        const data = await userService.craeteUser(req.body)
+
+        const user = await userService.craeteUser(req.body)
+
+        const userWallet = await Wallet.create({
+            owner: user._id,
+            balance: 50, 
+            isActive: "ACTIVE",
+            currency: "BDT",
+        })
 
         res.status(httpStatusCode.CREATED).json({
-            success : true,
-            message : 'User created successfully',
-            data
+            success: true,
+            message: 'User created successfully',
+            data : {user, userWallet}
         })
-    } catch (error : any) {
-          res.status(httpStatusCode.BAD_REQUEST).json({
-            success : false,
-            message : error.message,
+    } catch (error: any) {
+        res.status(httpStatusCode.BAD_REQUEST).json({
+            success: false,
+            message: error.message,
             error
         })
     }
 }
 
-const updateUser = async(req : Request, res : Response, next : NextFunction)=> {
-   try {
-     const userId = req.params.id;
-    const payload = req.body;
-    const token = req.headers.authorization;
-    const verifiedToken = await verifyToken(token as string, envConfig.jwtSecret) as JwtPayload
+const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.params.id;
+        const payload = req.body;
+        const token = req.headers.authorization;
+        const verifiedToken = await verifyToken(token as string, envConfig.jwtSecret) as JwtPayload
 
-    const data = await userService.updateUser(userId, payload, verifiedToken)
-   
-    
+        const data = await userService.updateUser(userId, payload, verifiedToken)
+
+
         res.status(httpStatusCode.CREATED).json({
-            success : true,
-            message : 'User updated successfully',
+            success: true,
+            message: 'User updated successfully',
             data
         })
-   } catch (error : any) {
-    res.status(httpStatusCode.BAD_REQUEST).json({
-            success : false,
-            message : error.message,
+    } catch (error: any) {
+        res.status(httpStatusCode.BAD_REQUEST).json({
+            success: false,
+            message: error.message,
             error
         })
-   }
+    }
 }
 
-const getAllUser = async(req : Request, res : Response, next : NextFunction) => {
+const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const users = await userService.getAllUser()
 
         res.status(httpStatusCode.OK).json({
-            success : true,
-            message : 'User retrive successfully',
-            data : users
+            success: true,
+            message: 'User retrive successfully',
+            data: users
         })
-    } catch (error : any) {
-          res.status(httpStatusCode.BAD_REQUEST).json({
-            success : false,
-            message : error.message,
+    } catch (error: any) {
+        res.status(httpStatusCode.BAD_REQUEST).json({
+            success: false,
+            message: error.message,
             error
         })
     }
