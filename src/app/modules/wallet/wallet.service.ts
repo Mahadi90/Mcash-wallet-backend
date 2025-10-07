@@ -3,8 +3,10 @@ import { TransactionStatus, TransactionType } from "../transaction/transaction.i
 import { Transaction } from "../transaction/transaction.model";
 import { Wallet } from "./wallet.model";
 import { WalletStatus } from "./wallet.interface";
+import { User } from "../user/user.model";
 
-// User mobile recharge (dummy)
+
+// User mobile recharge
 const rechargeMobile = async (userId: Types.ObjectId, mobileNumber: string, operator: string, amount: number) => {
   if (!mobileNumber || !operator || amount <= 0) {
     throw new Error("Invalid request");
@@ -91,10 +93,83 @@ const getWalletByUser = async (userId: Types.ObjectId) => {
 }
 
 
+const withdrawMoney = async (userId: Types.ObjectId, agentMobile: string, amount: number) => {
+  if (!agentMobile || amount <= 0) throw new Error("Invalid request");
+
+  const userWallet = await Wallet.findOne({ owner: userId, isActive: "ACTIVE" });
+  if (!userWallet) throw new Error("User wallet not found or blocked");
+
+  const agentUser = await User.findOne({ phone: agentMobile, role: "AGENT" });
+  if (!agentUser) throw new Error("No agent found with this mobile number");
+
+  const agentWallet = await Wallet.findOne({ owner: agentUser._id, isActive: "ACTIVE" });
+  if (!agentWallet) throw new Error("Agent wallet not found or blocked");
+
+
+  if (userWallet.balance < amount) throw new Error("Insufficient balance");
+
+
+  userWallet.balance -= amount;
+  agentWallet.balance += amount;
+
+  await userWallet.save();
+  await agentWallet.save();
+
+  await Transaction.create({
+    type: TransactionType.WITHDRAW,
+    from: userId,
+    to: agentUser._id,
+    amount,
+    status: TransactionStatus.COMPLETED,
+    details: { agentMobile },
+  });
+
+  return userWallet;
+};
+
+const sendMoney = async (senderId: Types.ObjectId, receiverNumber: string, amount: number) => {
+  if (!receiverNumber || amount <= 0) throw new Error("Invalid request");
+  
+  const receiverUser = await User.findOne({ phone: receiverNumber});
+  if (!receiverUser || receiverUser.role !== 'USER') throw new Error("Invalid receiver ID: No user found with this ID");
+
+  const senderWallet = await Wallet.findOne({ owner: senderId, isActive: "ACTIVE" });
+  const receiverWallet = await Wallet.findOne({ owner: receiverUser._id, isActive: "ACTIVE" });
+
+
+
+  if (!senderWallet) throw new Error("Sender wallet not found or blocked");
+  if (!receiverWallet) throw new Error("Receiver wallet not found or blocked");
+
+  if (senderWallet.balance < amount) throw new Error("Insufficient balance");
+
+  senderWallet.balance -= amount;
+  receiverWallet.balance += amount;
+
+  await senderWallet.save();
+  await receiverWallet.save();
+
+  await Transaction.create({
+    type: TransactionType.SEND_MONEY,
+    from: senderId,
+    amount,
+    details : {
+    from: senderId,
+    to : receiverNumber
+    },
+    status: TransactionStatus.COMPLETED,
+  });
+
+  return senderWallet;
+};
+
+
 
 export const walletService = {
   rechargeMobile,
   agentCashIn,
   setWalletStatus,
-  getWalletByUser
+  getWalletByUser,
+  withdrawMoney,
+  sendMoney
 }

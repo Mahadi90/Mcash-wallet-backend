@@ -15,6 +15,34 @@ export const rechargeMobile = async (req: any, res: Response) => {
 };
 
 
+const withdrawMoney = async (req: any, res: Response) => {
+  try {
+    const { agentMobile, amount } = req.body;
+    const wallet = await walletService.withdrawMoney(req.user.id, agentMobile, amount);
+    res.status(200).json({
+      message: "Withdraw successful through agent",
+      remaining_balance: wallet.balance,
+    });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+
+const sendMoney = async (req: any, res: Response) => {
+  try {
+    const { receiverNumber, amount } = req.body;
+    const wallet = await walletService.sendMoney(req.user.id, receiverNumber, amount);
+    res.status(200).json({
+      message: "Money sent successfully",
+      remaining_balance: wallet.balance,
+    });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+
 const agentCashIn = async (req: any, res: Response) => {
     try {
         const { userId, amount } = req.body;
@@ -50,5 +78,7 @@ export const walletController = {
     rechargeMobile,
     agentCashIn,
     setWalletStatus,
-    getWalletByUser
+    getWalletByUser,
+    withdrawMoney,
+    sendMoney
 }
