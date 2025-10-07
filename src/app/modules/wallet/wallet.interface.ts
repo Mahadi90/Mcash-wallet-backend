@@ -11,7 +11,8 @@ export interface IWallet {
   _id?: Types.ObjectId
   owner: Types.ObjectId  
   balance: number
-  isActive: WalletStatus
+  isActive: WalletStatus,
+  commission: number,
   currency: Currency
   createdAt?: Date
   updatedAt?: Date

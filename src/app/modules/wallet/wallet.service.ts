@@ -35,54 +35,51 @@ const rechargeMobile = async (userId: Types.ObjectId, mobileNumber: string, oper
   return wallet;
 }
 
-
-
-
 const agentCashIn = async (agentId: Types.ObjectId, userNumber: string, amount: number) => {
   if (!userNumber || amount <= 0) throw new Error("Invalid request");
 
   const receiverUser = await User.findOne({ phone: userNumber });
-  if (!receiverUser) {
-    throw new Error("User Number not found or blocked");
+  if (!receiverUser) throw new Error("User Number not found or blocked");
 
-  }
   const wallet = await Wallet.findOne({ owner: receiverUser._id });
+  if (!wallet) throw new Error("User wallet not found or blocked");
 
-  if (!wallet) {
-    throw new Error("User wallet not found or blocked");
-
-  }
   const agentWallet = await Wallet.findOne({ owner: agentId, isActive: "ACTIVE" });
-  if (!agentWallet) {
-    throw new Error("Do not get your agent wallet");
-  }
+  if (!agentWallet) throw new Error("Agent wallet not found or blocked");
 
-  if (agentWallet.balance < amount) {
-    throw new Error("Insufficient balance");
-  }
+  if (agentWallet.balance < amount) throw new Error("Insufficient balance");
 
-  wallet.balance += amount;
+  const commissionRate = 0.02;
+  const commission = amount * commissionRate;
+
+  wallet.balance += amount; 
   await wallet.save();
 
-  agentWallet.balance -= amount;
-  await agentWallet.save()
+  agentWallet.balance -= amount; 
+  agentWallet.commission += commission
+  await agentWallet.save();
 
+  
+ 
   await Transaction.create({
     type: TransactionType.CASH_IN,
     from: agentId,
-    details : {
-      from: agentId,
-      to : {
-        phone : userNumber,
-        name : receiverUser.name
-      }
-    },
+    to: receiverUser._id,
     amount,
     status: TransactionStatus.COMPLETED,
+    details: {
+      from:  agentId,
+      to: {
+        phone: userNumber,
+        name: receiverUser.name
+      }
+    },
+    
   });
 
-  return agentWallet;
-}
+  return { agentWallet, commission }; 
+};
+
 
 
 const setWalletStatus = async (walletId: Types.ObjectId, status: WalletStatus) => {
@@ -119,9 +116,12 @@ const withdrawMoney = async (userId: Types.ObjectId, agentMobile: string, amount
 
   if (userWallet.balance < amount) throw new Error("Insufficient balance");
 
+   const commissionRate = 0.02;
+  const commission = amount * commissionRate;
 
   userWallet.balance -= amount;
   agentWallet.balance += amount;
+  agentWallet.commission += commission
 
   await userWallet.save();
   await agentWallet.save();
@@ -176,6 +176,7 @@ const sendMoney = async (senderId: Types.ObjectId, receiverNumber: string, amoun
 
 
 
+
 const agentCashOut = async (
   agentId: string,
   targetMobileNumber: string,
@@ -198,12 +199,17 @@ const agentCashOut = async (
   if (userWallet.balance < amount) throw new Error("User has insufficient balance");
 
 
+ 
+  const commissionRate = 0.02; 
+  const commission = amount * commissionRate;
+
+
   userWallet.balance -= amount;
   await userWallet.save();
 
   agentWallet.balance += amount;
+  agentWallet.commission += commission
   await agentWallet.save();
-
 
   await Transaction.create({
     type: TransactionType.CASH_OUT,
@@ -214,8 +220,9 @@ const agentCashOut = async (
     details: { note: `Agent withdrew from user ${user.phone}` },
   });
 
-  return { agentWallet, userWallet };
+  return { agentWallet, userWallet, commission }; 
 };
+
 
 
 

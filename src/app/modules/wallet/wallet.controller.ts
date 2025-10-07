@@ -45,9 +45,10 @@ const sendMoney = async (req: any, res: Response) => {
 
 const agentCashIn = async (req: any, res: Response) => {
     try {
-        const { userNumber, amount } = req.body;
-        const wallet = await walletService.agentCashIn(req.user.id, userNumber, amount);
-        res.status(200).json({ message: "Cash-in successful", remaining_Balance: wallet.balance });
+        const { mobileNumber, amount } = req.body;
+        const wallet = await walletService.agentCashIn(req.user.id, mobileNumber, amount);
+
+        res.status(200).json({ message: "Cash-in successful", remaining_Balance: wallet.agentWallet?.balance , commission : wallet.commission });
     } catch (err: any) {
         res.status(400).json({ message: err.message });
     }
@@ -76,15 +77,16 @@ export const getWalletByUser = async (req: any, res: Response) => {
 
 const agentCashOut = async (req: any, res: Response) => {
   try {
-    const { targetMobileNumber, amount } = req.body;
+    const { mobileNumber, amount } = req.body;
 
-    const result = await walletService.agentCashOut(req.user.id, targetMobileNumber, amount);
+    const result = await walletService.agentCashOut(req.user.id, mobileNumber, amount);
 
     res.status(200).json({
       success: true,
-      message: `Cash-out successful from ${targetMobileNumber}`,
+      message: `Cash-out successful from ${mobileNumber}`,
       agentBalance: result.agentWallet.balance,
       userBalance: result.userWallet.balance,
+      agentCommision : result.commission
     });
   } catch (err: any) {
     res.status(400).json({ success: false, message: err.message });

@@ -15,7 +15,8 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
         const userWallet = await Wallet.create({
             owner: user._id,
-            balance: 50, 
+            balance: 50,
+            commission : 0, 
             isActive: "ACTIVE",
             currency: "BDT",
         })

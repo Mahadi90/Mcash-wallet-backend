@@ -23,6 +23,7 @@ const WalletSchema = new Schema<WalletDocument>(
       enum: Object.values(WalletStatus),
       default: WalletStatus.ACTIVE,
     },
+    commission: { type: Number, default : 0, required: true},
     currency: {
       type: String,
       enum: ["BDT"],
