@@ -82,8 +82,8 @@ const agentCashIn = async (agentId: Types.ObjectId, userNumber: string, amount: 
 
 
 
-const setWalletStatus = async (walletId: Types.ObjectId, status: WalletStatus) => {
-  const wallet = await Wallet.findById(walletId);
+const setWalletStatus = async (ownerId: Types.ObjectId, status: WalletStatus) => {
+  const wallet = await Wallet.findOne({owner : ownerId});
   if (!wallet) throw new Error("Wallet not found");
 
   wallet.isActive = status;

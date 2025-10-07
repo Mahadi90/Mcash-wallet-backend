@@ -10,8 +10,8 @@ router.post("/mobile-recharge",checkAuth(Role.USER, Role.AGENT), walletControlle
 router.post("/withdraw", checkAuth(Role.USER), walletController.withdrawMoney);
 router.post('/send-money', checkAuth(Role.USER), walletController.sendMoney)
 router.post("/cash-in", checkAuth(Role.AGENT), walletController.agentCashIn);
-router.patch('/wallet-status', checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.setWalletStatus)
-router.get("/user/:userId",checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.getWalletByUser);
+router.patch('/change-status/:id', checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.setWalletStatus)
+router.get("/userWallet/:userId",checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.getWalletByUser);
 router.post("/cash-out", checkAuth(Role.AGENT), walletController.agentCashOut);
 
 

@@ -56,9 +56,9 @@ const agentCashIn = async (req: any, res: Response) => {
 
 const setWalletStatus = async (req: any, res: Response) => {
     try {
-        const { walletId, status } = req.body;
+        const { status } = req.body;
         
-        const wallet = await walletService.setWalletStatus(walletId, status);
+        const wallet = await walletService.setWalletStatus(req.params.id, status);
         res.status(200).json({ message: `Wallet ${status}`, wallet });
     } catch (err: any) {
         res.status(400).json({ message: err.message });
