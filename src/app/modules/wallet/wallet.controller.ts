@@ -45,8 +45,8 @@ const sendMoney = async (req: any, res: Response) => {
 
 const agentCashIn = async (req: any, res: Response) => {
     try {
-        const { userId, amount } = req.body;
-        const wallet = await walletService.agentCashIn(req.user.id, userId, amount);
+        const { userNumber, amount } = req.body;
+        const wallet = await walletService.agentCashIn(req.user.id, userNumber, amount);
         res.status(200).json({ message: "Cash-in successful", remaining_Balance: wallet.balance });
     } catch (err: any) {
         res.status(400).json({ message: err.message });
@@ -74,11 +74,29 @@ export const getWalletByUser = async (req: any, res: Response) => {
   }
 };
 
+const agentCashOut = async (req: any, res: Response) => {
+  try {
+    const { targetMobileNumber, amount } = req.body;
+
+    const result = await walletService.agentCashOut(req.user.id, targetMobileNumber, amount);
+
+    res.status(200).json({
+      success: true,
+      message: `Cash-out successful from ${targetMobileNumber}`,
+      agentBalance: result.agentWallet.balance,
+      userBalance: result.userWallet.balance,
+    });
+  } catch (err: any) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
 export const walletController = {
     rechargeMobile,
     agentCashIn,
     setWalletStatus,
     getWalletByUser,
     withdrawMoney,
-    sendMoney
+    sendMoney,
+    agentCashOut
 }

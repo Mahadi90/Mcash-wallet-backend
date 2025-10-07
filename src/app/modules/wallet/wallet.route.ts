@@ -12,6 +12,8 @@ router.post('/send-money', checkAuth(Role.USER), walletController.sendMoney)
 router.post("/cash-in", checkAuth(Role.AGENT), walletController.agentCashIn);
 router.patch('/wallet-status', checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.setWalletStatus)
 router.get("/user/:userId",checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.getWalletByUser);
+router.post("/cash-out", checkAuth(Role.AGENT), walletController.agentCashOut);
+
 
 export const walletRouter = router
 
