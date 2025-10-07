@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {  Response } from "express";
+import {  RequestHandler, Response } from "express";
 import { walletService } from "./wallet.service";
 
 
@@ -93,6 +93,15 @@ const agentCashOut = async (req: any, res: Response) => {
   }
 };
 
+const getWallets: RequestHandler = async (req, res) => {
+  try {
+    const wallets = await walletService.getAllWallets();
+    res.status(200).json({ success: true, count: wallets.length, data: wallets });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 export const walletController = {
     rechargeMobile,
     agentCashIn,
@@ -100,5 +109,6 @@ export const walletController = {
     getWalletByUser,
     withdrawMoney,
     sendMoney,
-    agentCashOut
+    agentCashOut,
+    getWallets
 }

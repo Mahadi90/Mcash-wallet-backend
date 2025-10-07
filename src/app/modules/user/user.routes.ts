@@ -6,6 +6,7 @@ import { Role } from "./user.interface";
 const router = Router()
 
 router.get('/all-user', checkAuth(Role.ADMIN, Role.SUPER_ADMIN) ,userController.getAllUser)
+router.get('/all-agent', checkAuth(Role.ADMIN, Role.SUPER_ADMIN) ,userController.getAgents)
 router.post('/register' ,userController.createUser)
 router.patch('/:id', checkAuth(...Object.values(Role)), userController.updateUser)
 

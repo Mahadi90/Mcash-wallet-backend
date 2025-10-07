@@ -11,7 +11,8 @@ router.post("/withdraw", checkAuth(Role.USER), walletController.withdrawMoney);
 router.post('/send-money', checkAuth(Role.USER), walletController.sendMoney)
 router.post("/cash-in", checkAuth(Role.AGENT), walletController.agentCashIn);
 router.patch('/change-status/:id', checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.setWalletStatus)
-router.get("/userWallet/:userId",checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.getWalletByUser);
+router.get("/user-wallet/:userId",checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.getWalletByUser);
+router.get("/all-wallet",checkAuth(Role.ADMIN, Role.SUPER_ADMIN), walletController.getWallets);
 router.post("/cash-out", checkAuth(Role.AGENT), walletController.agentCashOut);
 
 

@@ -61,15 +61,21 @@ const updateUser = async(userId : string, payload : Partial<IUser>, decodedToken
 
 const getAllUser = async () => {
 
-    const users = await User.find()
+    const users =  await User.find({ role: "USER" }).select("-password").sort({ createdAt: -1 });
 
-    return {
-        users
-    }
+    return users;
+    
+}
+const getAllAgents  = async () => {
+
+    const agents =  await User.find({ role: "AGENT" }).select("-password").sort({ createdAt: -1 });
+
+    return agents;
 }
 
 export const userService = {
     craeteUser,
     getAllUser,
-    updateUser
+    updateUser,
+    getAllAgents
 }

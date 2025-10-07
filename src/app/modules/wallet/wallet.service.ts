@@ -224,7 +224,13 @@ const agentCashOut = async (
 };
 
 
+const getAllWallets = async () => {
+  const wallets =  await Wallet.find()
+    .populate("owner", "name phone role")
+    .sort({ createdAt: -1 });
 
+    return wallets;
+};
 
 export const walletService = {
   rechargeMobile,
@@ -233,5 +239,6 @@ export const walletService = {
   getWalletByUser,
   withdrawMoney,
   sendMoney,
-  agentCashOut
+  agentCashOut,
+  getAllWallets
 }

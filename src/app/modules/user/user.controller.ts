@@ -16,7 +16,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         const userWallet = await Wallet.create({
             owner: user._id,
             balance: 50,
-            commission : 0, 
+            commission: 0,
             isActive: "ACTIVE",
             currency: "BDT",
         })
@@ -24,7 +24,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         res.status(httpStatusCode.CREATED).json({
             success: true,
             message: 'User created successfully',
-            data : {user, userWallet}
+            data: { user, userWallet }
         })
     } catch (error: any) {
         res.status(httpStatusCode.BAD_REQUEST).json({
@@ -66,6 +66,7 @@ const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
         res.status(httpStatusCode.OK).json({
             success: true,
             message: 'User retrive successfully',
+            count: users.length,
             data: users
         })
     } catch (error: any) {
@@ -77,8 +78,18 @@ const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const getAgents = async (req: Request, res: Response) => {
+    try {
+        const agents = await userService.getAllAgents();
+        res.status(200).json({ success: true, count: agents.length, data: agents });
+    } catch (err: any) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+
 export const userController = {
     createUser,
     getAllUser,
-    updateUser
+    updateUser,
+    getAgents
 }
